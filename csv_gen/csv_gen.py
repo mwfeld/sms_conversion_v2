@@ -1,6 +1,6 @@
 from gooey import Gooey, GooeyParser
 import csv, os
-
+import re
 
 @Gooey(requires_shell=False)
 def main():
@@ -24,13 +24,26 @@ def main():
                 working_list.append('{}|{}'.format(row[2][3:], row[0]))
                 working_list.append('siteId={}'.format(row[4][3:]))
                 working_list.append('productSku={}'.format(row[5]))
-                working_list.append(row[6])
+                working_list.append(strip_space_brackets(row[6]))
                 eap_data.append(working_list)
 
     with open(os.path.join(os.getcwd(), 'bracketed_skus.csv'), 'w', newline='') as new_csv:
         data_writer = csv.writer(new_csv)
         for row in eap_data:
             data_writer.writerow(row)
+
+def strip_space_brackets(sku):
+    p_sku_space = re.compile(r'(^.*)(\[\d*\]$)')
+    re_result = re.search(p_sku_space, sku)
+    stripped_sku = '{}{}'.format(re_result.group(1).strip(), re_result.group(2))
+    return stripped_sku
+
+def vend_pack_to_upper(sku):
+    pass
+
+def format_bracketed_sku(sku):
+    pass
+
 
 if __name__ == '__main__':
     main()
